@@ -1,5 +1,9 @@
 /*
- *  Ralink V11ST-FE board support
+ *  Airlink101 AR725W support
+ *
+ *  Copyright (C) 2014 Claudio Leite <leitec@staticky.com>
+ *
+ *  Based on V11ST-FE support code:
  *
  *  Copyright (C) 2012 Florian Fainelli <florian@openwrt.org>
  *
@@ -24,11 +28,6 @@
 #define AR725W_GPIO_WPS_RED_LED         8
 #define AR725W_GPIO_WPS_BLUE_LED        13
 
-#if 0
-#define V11ST_FE_KEYS_POLL_INTERVAL	20
-#define V11ST_FE_KEYS_DEBOUNCE_INTERVAL	(3 * V11ST_FE_KEYS_POLL_INTERVAL)
-#endif
-
 static struct gpio_led ar725w_leds_gpio[] __initdata = {
 	{
 		.name		= "ar725w:red:wps",
@@ -41,18 +40,6 @@ static struct gpio_led ar725w_leds_gpio[] __initdata = {
                 .active_low     = 1,
         }
 };
-
-#if 0
-static struct gpio_keys_button v11st_fe_gpio_buttons[] __initdata = {
-	{
-		.desc		= "wps",
-		.type		= EV_KEY,
-		.code		= KEY_WPS_BUTTON,
-		.debounce_interval = V11ST_FE_KEYS_DEBOUNCE_INTERVAL,
-		.gpio		= V11ST_FE_GPIO_BUTTON_WPS,
-	}
-};
-#endif
 
 static void __init rt_ar725w_init(void)
 {
