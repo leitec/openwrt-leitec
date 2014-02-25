@@ -260,7 +260,7 @@ endef
 # not sure what langpack is, and it seems to be erased by the
 # factory flash (at least the Asante one) so it should be
 # safe to erase for us, too.
-mtdlayout_ar725w=320k(u-boot)ro,896k(kernel),2472k(rootfs),64k(nvram)ro,64k(factory)ro,3648k@0x50000(firmware)
+mtdlayout_ar725w=320k(u-boot)ro,896k(kernel),2752k(rootfs),64k(nvram)ro,64k(factory)ro,3648k@0x50000(firmware)
 mtd_ar725w_kernel_part_size=917504
 mtd_ar725w_rootfs_part_size=2531328
 define BuildFirmware/AR725W

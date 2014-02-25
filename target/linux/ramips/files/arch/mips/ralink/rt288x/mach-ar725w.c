@@ -32,28 +32,24 @@ static struct gpio_led ar725w_leds_gpio[] __initdata = {
 	{
 		.name		= "ar725w:red:wps",
 		.gpio		= AR725W_GPIO_WPS_RED_LED,
-                .active_low     = 1,
+                .active_low     = 0,
 	},
         {
                 .name           = "ar725w:blue:wps",
                 .gpio           = AR725W_GPIO_WPS_BLUE_LED,
-                .active_low     = 1,
+                .active_low     = 0,
         }
 };
 
 static void __init rt_ar725w_init(void)
 {
-#if 0
 	rt288x_gpio_init(RT2880_GPIO_MODE_UART0 | RT2880_GPIO_MODE_I2C |
                             RT2880_GPIO_MODE_SPI);
-#endif
 
 	rt288x_register_flash(0);
 
-#if 0
 	ramips_register_gpio_leds(-1, ARRAY_SIZE(ar725w_leds_gpio),
 				  ar725w_leds_gpio);
-#endif
 
 #if 0
 	ramips_register_gpio_buttons(-1, V11ST_FE_KEYS_POLL_INTERVAL,
