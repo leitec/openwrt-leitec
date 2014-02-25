@@ -254,6 +254,19 @@ define BuildFirmware/F5D8235
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_f5d8235)),$(mtd_f5d8235_kernel_part_size),$(mtd_f5d8235_rootfs_part_size))
 endef
 
+# Factory layout is 2432k(rootfs),320k(langpack)
+# rootfs_part_size=2490368
+#
+# not sure what langpack is, and it seems to be erased by the
+# factory flash (at least the Asante one) so it should be
+# safe to erase for us, too.
+mtdlayout_ar725w=320k(u-boot)ro,896k(kernel),2472k(rootfs),64k(nvram)ro,64k(factory)ro,3648k@0x50000(firmware)
+mtd_ar725w_kernel_part_size=917504
+mtd_ar725w_rootfs_part_size=2531328
+define BuildFirmware/AR725W
+	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
+endef
+
 define BuildFirmware/FONERA20N
 	$(call BuildFirmware/GENERIC_8M,$(1),fonera20n,FONERA20N,ttyS1,57600,phys)
 	$(call BuildFirmware/Edimax,$(1),fonera20n,RSDK,NL1T,0x50000,0xc0000)
@@ -408,6 +421,10 @@ endef
 #
 # RT288X Profiles
 #
+define Image/Build/Profile/AR725W
+	$(call Image/Build/Template/$(fs_squash)/$(1),AR725W,ar725w,AR725W)
+endef
+
 define Image/Build/Profile/F5D8235V1
 	$(call Image/Build/Template/$(fs_squash)/$(1),F5D8235,f5d8235v1,F5D8235_V1)
 endef
@@ -426,6 +443,7 @@ endef
 
 ifeq ($(CONFIG_RALINK_RT288X),y)
 define Image/Build/Profile/Default
+	$(call Image/Build/Profile/AR725W,$(1))
 	$(call Image/Build/Profile/F5D8235V1,$(1))
 	$(call Image/Build/Profile/RTN15,$(1))
 	$(call Image/Build/Profile/V11STFE,$(1))

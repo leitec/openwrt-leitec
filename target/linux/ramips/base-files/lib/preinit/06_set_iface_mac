@@ -15,6 +15,11 @@ preinit_set_mac_address() {
 		mac=$(ramips_get_mac_binary factory 4)
 		ifconfig eth0 hw ether $mac 2>/dev/null
 		;;
+        ar725w)
+                mac=$(ramips_get_mac_binary u-boot 262148)
+                mac=$(maccalc or "$mac" "02:00:00:00:00:00")
+                ifconfig eth0 hw ether $mac 2>/dev/null
+                ;;
 	bc2 |\
 	dir-620-a1 |\
 	esr-9753 |\
