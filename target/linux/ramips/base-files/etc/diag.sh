@@ -33,6 +33,9 @@ get_status_led() {
 	3g-6200n)
 		status_led="edimax:green:power"
 		;;
+        ar725w)
+                status_led="ar725w:green:power"
+                ;;
 	argus-atp52b)
 		status_led="argus-atp52b:green:run"
 		;;

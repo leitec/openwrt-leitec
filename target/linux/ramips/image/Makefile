@@ -254,15 +254,23 @@ define BuildFirmware/F5D8235
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_f5d8235)),$(mtd_f5d8235_kernel_part_size),$(mtd_f5d8235_rootfs_part_size))
 endef
 
-# Factory layout is 2432k(rootfs),320k(langpack)
+# Factory layout is 2432k(rootfs),320k(langpack),64k(nvram),64k(factory)
 # rootfs_part_size=2490368
 #
 # not sure what langpack is, and it seems to be erased by the
 # factory flash (at least the Asante one) so it should be
 # safe to erase for us, too.
-mtdlayout_ar725w=320k(u-boot)ro,896k(kernel),2752k(rootfs),64k(nvram)ro,64k(factory)ro,3648k@0x50000(firmware)
+#
+# erasing NVRAM doesn't seem to be a problem.
+# very little appears to be in "factory" -- the only HW
+# info is in the u-boot partition @ 0x40000.
+# 
+# this does mean you lose your prefs. if reverting to the
+# factory FW, but you can back that up first if that's
+# important.
+mtdlayout_ar725w=320k(u-boot)ro,896k(kernel),2880k(rootfs),3776k@0x50000(firmware)
 mtd_ar725w_kernel_part_size=917504
-mtd_ar725w_rootfs_part_size=2531328
+mtd_ar725w_rootfs_part_size=2949120
 define BuildFirmware/AR725W
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
 endef

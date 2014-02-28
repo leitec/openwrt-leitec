@@ -25,9 +25,22 @@
 
 #include "devices.h"
 
-#define AR725W_GPIO_POWER_LED           7
+/*
+ * I can't figure out how to turn these on.
+ * They come on fine in the factory firmware
+ * so there may be another GPIO or something
+ * else ANDed with the LED pins here?
+ */
 #define AR725W_GPIO_WPS_RED_LED         8
 #define AR725W_GPIO_WPS_BLUE_LED        13
+
+#define AR725W_GPIO_POWER_LED           7
+
+#define AR725W_GPIO_BUTTON_WPS	        0
+#define AR725W_GPIO_BUTTON_RESET        9
+
+#define AR725W_KEYS_POLL_INTERVAL	20
+#define AR725W_KEYS_DEBOUNCE_INTERVAL	(3 * AR725W_KEYS_POLL_INTERVAL)
 
 static struct gpio_led ar725w_leds_gpio[] __initdata = {
         {
@@ -35,16 +48,25 @@ static struct gpio_led ar725w_leds_gpio[] __initdata = {
             .gpio           = AR725W_GPIO_POWER_LED,
             .active_low     = 0,
         },
+};
+
+static struct gpio_keys_button ar725w_gpio_buttons[] __initdata = {
 	{
-	    .name           = "ar725w:red:wps",
-	    .gpio           = AR725W_GPIO_WPS_RED_LED,
-            .active_low     = 0,
+		.desc		= "wps",
+		.type		= EV_KEY,
+		.code		= KEY_WPS_BUTTON,
+		.debounce_interval = AR725W_KEYS_DEBOUNCE_INTERVAL,
+		.gpio		= AR725W_GPIO_BUTTON_WPS,
+                .active_low     = 1,
 	},
-        {
-            .name           = "ar725w:blue:wps",
-            .gpio           = AR725W_GPIO_WPS_BLUE_LED,
-            .active_low     = 0,
-        }
+	{
+		.desc		= "reset",
+		.type		= EV_KEY,
+		.code		= KEY_RESTART,
+		.debounce_interval = AR725W_KEYS_DEBOUNCE_INTERVAL,
+		.gpio		= AR725W_GPIO_BUTTON_RESET,
+		.active_low	= 1,
+	} 
 };
 
 static void __init rt_ar725w_init(void)
@@ -53,16 +75,12 @@ static void __init rt_ar725w_init(void)
 
 	rt288x_register_flash(0);
 
-#if 0
 	ramips_register_gpio_leds(-1, ARRAY_SIZE(ar725w_leds_gpio),
 				  ar725w_leds_gpio);
-#endif
 
-#if 0
-	ramips_register_gpio_buttons(-1, V11ST_FE_KEYS_POLL_INTERVAL,
-				     ARRAY_SIZE(v11st_fe_gpio_buttons),
-				     v11st_fe_gpio_buttons);
-#endif
+	ramips_register_gpio_buttons(-1, AR725W_KEYS_POLL_INTERVAL,
+				     ARRAY_SIZE(ar725w_gpio_buttons),
+				     ar725w_gpio_buttons);
 
 	rt288x_register_wifi();
 
