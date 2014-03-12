@@ -55,23 +55,20 @@ int main(int argc, char *argv[])
 {
     unsigned long res, flen;
     struct ralink_header my_hdr;
-    char *f_out_name, *f_out_dirname, *f_out_basename, *f_cpy;
     FILE *f, *f_out;
-    int use_asante;
+    int use_asante = 0;
     uint8_t *buf;
     uint32_t crc;
 
-    if(argc < 2) {
-        printf("usage: mkheader_ar725w <uImage filename> [--asante]\n");
-        printf("  outputs webflash_<uImage filename>\n");
+    if(argc < 3) {
+        printf("usage: mkheader_ar725w <uImage> <webflash image> [--asante]\n");
         printf("  --asante: use magic for Asante AWRT-600N\n");
         exit(-1);
     }
 
-    if(argc == 3)
-        use_asante = 1;
-    else
-        use_asante = 0;
+    if(argc == 4)
+        if(strcmp(argv[3], "--asante") == 0)
+            use_asante = 1;
 
     printf("Opening %s...\n", argv[1]);
 
@@ -93,27 +90,7 @@ int main(int argc, char *argv[])
 
     fclose(f);
 
-    f_out_name = malloc(strlen(argv[1])+10);
-    f_cpy = strdup(argv[1]);
-
-    f_out_dirname = dirname(argv[1]);
-    f_out_basename = basename(f_cpy);
-
-    printf("%s\n%s\n", f_out_dirname, f_out_basename);
-    
-    if(strcmp(f_out_dirname, ".") != 0) {
-        strcpy(f_out_name, f_out_dirname);
-        strcat(f_out_name, "/");
-    } else {
-        f_out_name[0] = 0;
-    }
-
-    strcat(f_out_name, "webflash_");
-    strcat(f_out_name, f_out_basename);;
-
-    free(f_cpy);
-
-    printf("\nCreating %s...\n", f_out_name);
+    printf("\nCreating %s...\n", argv[2]);
 
     memset(&my_hdr, 0, sizeof(struct ralink_header));
 
@@ -145,13 +122,12 @@ int main(int argc, char *argv[])
     memcpy(buf, &my_hdr, 32);
 
     printf("  Writing...\n");
-    f_out = fopen(f_out_name, "w");
+    f_out = fopen(argv[2], "w");
 
     fwrite(buf, 1, flen + 32, f_out);
 
     fclose(f_out);
 
-    free(f_out_name);
     free(buf);
     return 0;
 }
