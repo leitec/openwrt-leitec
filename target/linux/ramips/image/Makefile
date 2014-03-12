@@ -276,8 +276,14 @@ define BuildFirmware/AR725W
 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
 		mkheader_ar725w "$(call sysupname,$(1),$(2))" \
 		 "$(call imgname,$(1),$(2))-webflash.bin"; \
+	fi
+endef
+
+define BuildFirmware/AWRT600N
+	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
+	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
 		mkheader_ar725w "$(call sysupname,$(1),$(2))" \
-		 "$(call imgname,$(1),$(2))-awrt600n-webflash.bin" --asante; \
+		 "$(call imgname,$(1),$(2))-webflash.bin" --asante; \
 	fi
 endef
 
@@ -437,6 +443,7 @@ endef
 #
 define Image/Build/Profile/AR725W
 	$(call Image/Build/Template/$(fs_squash)/$(1),AR725W,ar725w,AR725W)
+	$(call Image/Build/Template/$(fs_squash)/$(1),AWRT600N,awrt600n,AR725W)
 endef
 
 define Image/Build/Profile/F5D8235V1
