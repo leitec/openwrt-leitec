@@ -273,6 +273,9 @@ mtd_ar725w_kernel_part_size=917504
 mtd_ar725w_rootfs_part_size=2949120
 define BuildFirmware/AR725W
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
+	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
+		mkheader_ar725w "$(call sysupname,$(1),$(2))"; \
+	fi
 endef
 
 define BuildFirmware/FONERA20N
