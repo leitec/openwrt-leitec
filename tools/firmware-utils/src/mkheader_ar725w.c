@@ -69,24 +69,34 @@ struct ralink_header {
     uint8_t lang[4];
 };
 
+enum {
+    TYPE_AR725W,
+    TYPE_AWRT600N,
+    TYPE_WRT110
+};
+
 int main(int argc, char *argv[])
 {
     unsigned long res, flen;
     struct ralink_header my_hdr;
     FILE *f, *f_out;
-    int use_asante = 0;
+    int image_type = TYPE_AR725W;
     uint8_t *buf;
     uint32_t crc;
 
     if(argc < 3) {
-        printf("usage: mkheader_ar725w <uImage> <webflash image> [--asante]\n");
-        printf("  --asante: use magic for Asante AWRT-600N\n");
+        printf("mkheader_ar725w <uImage> <webflash image> [--awrt600n|--wrt110]\n");
+        printf("  --awrt600n: use magic for Asante AWRT-600N\n");
+        printf("  --wrt110  : use magic for Linksys WRT110\n");
         exit(-1);
     }
 
-    if(argc == 4)
-        if(strcmp(argv[3], "--asante") == 0)
-            use_asante = 1;
+    if(argc == 4) {
+        if(strcmp(argv[3], "--awrt600n") == 0)
+            image_type = TYPE_AWRT600N;
+        else if(strcmp(argv[3], "--wrt110") == 0)
+            image_type = TYPE_WRT110;
+    }
 
     printf("Opening %s...\n", argv[1]);
 
@@ -116,19 +126,27 @@ int main(int argc, char *argv[])
      * magic numbers derived experimentally and from
      * the 'tftpd' binary and Asante firmware .bin
      */
-    if(use_asante) {
+    if(image_type == TYPE_AWRT600N) {
         printf("  Using Asante AWRT-600N magic\n");
         memcpy(my_hdr.magic, "A600", 4);
         memcpy(my_hdr.version, "1005", 4);
+        my_hdr.product_id = htole32(0x03000001);
+        memcpy(my_hdr.build, "01", 2);
+    } else if(image_type == TYPE_WRT110) {
+        printf("  Using Linksys WRT110 magic\n");
+        memcpy(my_hdr.magic, "GMTK", 4);
+        memcpy(my_hdr.version, "1007", 4);
+        my_hdr.product_id = htole32(0x03040001);
+        memcpy(my_hdr.build, "2", 1);
     } else {
         printf("  Using Airlink101 AR725W magic\n");
         memcpy(my_hdr.magic, "GMTK", 4);
         memcpy(my_hdr.version, "1003", 4);
+        my_hdr.product_id = htole32(0x03000001);
+        memcpy(my_hdr.build, "01", 2);
     }
 
-    my_hdr.product_id = htole32(0x03000001);
     my_hdr.imagesz = htole32(flen + 0x20);
-    memcpy(my_hdr.build, "01", 2);
     memcpy(my_hdr.lang, "EN", 2);
 
     memcpy(buf, &my_hdr, 32);
