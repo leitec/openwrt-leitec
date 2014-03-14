@@ -17,13 +17,15 @@
  */
 
 /*
- * Build a proper image for the Airlink101 AR725W router
- * and the Asante AWRT-600N router. The resulting image
- * is compatible with the factory firmware's web and TFTP
- * interfaces.
+ * Builds a proper flash image for routers using some Gemtek
+ * OEM boards. These include the Airlink101 AR725W, the
+ * Asante SmartHub 600 (AWRT-600N), and Linksys WRT110.
+ *
+ * The resulting image is compatible with the factory firmware
+ * web upgrade and TFTP interface.
  *
  * To build:
- *  gcc -O2 -o mkheader_ar725w mkheader_ar725w.c -lz
+ *  gcc -O2 -o mkheader_gemtek mkheader_gemtek.c -lz
  *
  * Claudio Leite <leitec@staticky.com>
  */
@@ -58,7 +60,7 @@
 # include <sys/endian.h> /* BSD's will have this */
 #endif
 
-struct ralink_header {
+struct gemtek_header {
     uint8_t magic[4];
     uint8_t version[4];
     uint32_t product_id;
@@ -69,16 +71,34 @@ struct ralink_header {
     uint8_t lang[4];
 };
 
+struct machines {
+    char *desc;
+    uint32_t maxsize;
+    struct gemtek_header header;
+};
+
 enum {
     TYPE_AR725W,
     TYPE_AWRT600N,
     TYPE_WRT110
 };
 
+struct machines mach_def[] = {
+    { "Airlink101 AR725W", 0x340000,
+      { "GMTK", "1003", htole32(0x03000001), 0, 0,
+          0, "01\0\0",  "EN\0\0" }},
+    { "Asante AWRT-1600N", 0x340000,
+      { "A600", "1005", htole32(0x03000001), 0, 0,
+          0, "01\0\0",  "EN\0\0" }},
+    { "Linksys WRT110",    0x3B0000,
+      { "GMTK", "1007", htole32(0x03040001), 0, 0,
+          0, "2\0\0\0", "EN\0\0" }}
+};
+
 int main(int argc, char *argv[])
 {
     unsigned long res, flen;
-    struct ralink_header my_hdr;
+    struct gemtek_header my_hdr;
     FILE *f, *f_out;
     int image_type = TYPE_AR725W;
     uint8_t *buf;
@@ -92,10 +112,14 @@ int main(int argc, char *argv[])
     }
 
     if(argc == 4) {
-        if(strcmp(argv[3], "--awrt600n") == 0)
+        if(strcmp(argv[3], "--awrt600n") == 0) {
             image_type = TYPE_AWRT600N;
-        else if(strcmp(argv[3], "--wrt110") == 0)
+        } else if(strcmp(argv[3], "--wrt110") == 0) {
             image_type = TYPE_WRT110;
+        } else {
+            fprintf(stderr, "Invalid option: %s\n", argv[3]);
+            exit(-1);
+        }
     }
 
     printf("Opening %s...\n", argv[1]);
@@ -107,12 +131,19 @@ int main(int argc, char *argv[])
 
     printf("  %lu (0x%lX) bytes long\n", flen, flen);
 
+    if(flen > mach_def[image_type].maxsize) {
+        fprintf(stderr, "\nERROR: image exceeds maximum compatible size\n");
+        fclose(f);
+        exit(-1);
+    }
+
     buf = malloc(flen+32);
 
     rewind(f);
     res = fread(buf+32, 1, flen, f);
     if(res != flen) {
         perror("Couldn't read entire file: fread()");
+        fclose(f);
         exit(-1);
     }
 
@@ -120,31 +151,9 @@ int main(int argc, char *argv[])
 
     printf("\nCreating %s...\n", argv[2]);
 
-    memset(&my_hdr, 0, sizeof(struct ralink_header));
+    memcpy(&my_hdr, &mach_def[image_type].header, sizeof(struct gemtek_header));
 
-    /*
-     * magic numbers derived experimentally and from
-     * the 'tftpd' binary and Asante firmware .bin
-     */
-    if(image_type == TYPE_AWRT600N) {
-        printf("  Using Asante AWRT-600N magic\n");
-        memcpy(my_hdr.magic, "A600", 4);
-        memcpy(my_hdr.version, "1005", 4);
-        my_hdr.product_id = htole32(0x03000001);
-        memcpy(my_hdr.build, "01", 2);
-    } else if(image_type == TYPE_WRT110) {
-        printf("  Using Linksys WRT110 magic\n");
-        memcpy(my_hdr.magic, "GMTK", 4);
-        memcpy(my_hdr.version, "1007", 4);
-        my_hdr.product_id = htole32(0x03040001);
-        memcpy(my_hdr.build, "2", 1);
-    } else {
-        printf("  Using Airlink101 AR725W magic\n");
-        memcpy(my_hdr.magic, "GMTK", 4);
-        memcpy(my_hdr.version, "1003", 4);
-        my_hdr.product_id = htole32(0x03000001);
-        memcpy(my_hdr.build, "01", 2);
-    }
+    printf("  Using %s magic\n", mach_def[image_type].desc);
 
     my_hdr.imagesz = htole32(flen + 0x20);
     memcpy(my_hdr.lang, "EN", 2);
