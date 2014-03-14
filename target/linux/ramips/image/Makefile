@@ -254,7 +254,7 @@ define BuildFirmware/F5D8235
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_f5d8235)),$(mtd_f5d8235_kernel_part_size),$(mtd_f5d8235_rootfs_part_size))
 endef
 
-# Factory layout is 2432k(rootfs),320k(langpack),64k(nvram),64k(factory)
+# Factory layout is 2432k(rootfs),320k(langpack),64k(nvram),64k(factory_nvram)
 # rootfs_part_size=2490368
 #
 # not sure what langpack is, and it seems to be erased by the
@@ -262,28 +262,34 @@ endef
 # safe to erase for us, too.
 #
 # erasing NVRAM doesn't seem to be a problem.
-# very little appears to be in "factory" -- the only HW
+# very little appears to be in "factory_nvram" -- the only HW
 # info is in the u-boot partition @ 0x40000.
 # 
 # this does mean you lose your prefs. if reverting to the
 # factory FW, but you can back that up first if that's
 # important.
+#
+# factory flash images have a max size of 0x340000 bytes,
+# since the factory firmware's upgrade process deletes
+# the "langpack" partition
 mtdlayout_ar725w=320k(u-boot)ro,896k(kernel),2880k(rootfs),3776k@0x50000(firmware)
 mtd_ar725w_kernel_part_size=917504
 mtd_ar725w_rootfs_part_size=2949120
 define BuildFirmware/AR725W
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
-		mkheader_ar725w "$(call sysupname,$(1),$(2))" \
-		 "$(call imgname,$(1),$(2))-webflash.bin"; \
+		mkheader_gemtek "$(call sysupname,$(1),$(2))" \
+		 "$(call imgname,$(1),$(2))-factory.bin" || \
+		   rm -f "$(call imgname,$(1),$(2))-factory.bin"; \
 	fi
 endef
 
 define BuildFirmware/AWRT600N
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
-		mkheader_ar725w "$(call sysupname,$(1),$(2))" \
-		 "$(call imgname,$(1),$(2))-webflash.bin" --asante; \
+		mkheader_gemtek "$(call sysupname,$(1),$(2))" \
+		 "$(call imgname,$(1),$(2))-factory.bin" --awrt600n || \
+		   rm -f "$(call imgname,$(1),$(2))-factory.bin"; \
 	fi
 endef
 
