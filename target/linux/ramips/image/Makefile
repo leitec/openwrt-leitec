@@ -293,6 +293,16 @@ define BuildFirmware/AWRT600N
 	fi
 endef
 
+# Linksys WRT110's layout is the same as the AR725W
+define BuildFirmware/WRT110
+	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
+	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
+		mkheader_gemtek "$(call sysupname,$(1),$(2))" \
+		 "$(call imgname,$(1),$(2))-factory.bin" 2 || \
+		   rm -f "$(call imgname,$(1),$(2))-factory.bin"; \
+	fi
+endef
+
 define BuildFirmware/FONERA20N
 	$(call BuildFirmware/GENERIC_8M,$(1),fonera20n,FONERA20N,ttyS1,57600,phys)
 	$(call BuildFirmware/Edimax,$(1),fonera20n,RSDK,NL1T,0x50000,0xc0000)
@@ -450,6 +460,10 @@ endef
 define Image/Build/Profile/AR725W
 	$(call Image/Build/Template/$(fs_squash)/$(1),AR725W,ar725w,AR725W)
 	$(call Image/Build/Template/$(fs_squash)/$(1),AWRT600N,awrt600n,AR725W)
+endef
+
+define Image/Build/Profile/WRT110
+	$(call Image/Build/Template/$(fs_squash)/$(1),WRT110,wrt110,WRT110)
 endef
 
 define Image/Build/Profile/F5D8235V1

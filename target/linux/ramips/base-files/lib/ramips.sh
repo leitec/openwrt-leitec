@@ -119,6 +119,9 @@ ramips_board_name() {
 	*"La Fonera 2.0N")
 		name="fonera20n"
 		;;
+	*"Linksys WRT110")
+		name="wrt110"
+		;;
 	*"MoFi Network MOFI3500-3GN")
 		name="mofi3500-3gn"
 		;;

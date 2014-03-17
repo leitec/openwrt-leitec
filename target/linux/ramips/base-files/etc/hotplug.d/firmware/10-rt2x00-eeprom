@@ -50,7 +50,8 @@ case "$FIRMWARE" in
 
 	ar725w | \
 	f5d8235-v1 | \
-	f5d8235-v2)
+	f5d8235-v2 | \
+	wrt110)
 		rt2x00_eeprom_extract "u-boot" 262144 512
 		;;
 
