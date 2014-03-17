@@ -34,7 +34,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <libgen.h>
 
 #include <zlib.h> /* for crc32() */
 
@@ -45,19 +44,22 @@
  */
 #if defined(__linux__)
 # include <endian.h>
-# ifndef htole32
-#  include <byteswap.h>
-#  if __BYTE_ORDER == __BIG_ENDIAN
-#   define htole32(x) __bswap_32(x)
-#  else
-#   define htole32(x) (x)
-#  endif
-# endif
 #elif defined(__APPLE__)
-# include <libkern/OSByteOrder.h>
-# define htole32 OSSwapHostToLittleInt32
+#include <libkern/OSByteOrder.h>
+#define le32 OSSwapHostToLittleInt32
 #else
-# include <sys/endian.h> /* BSD's will have this */
+# include <sys/endian.h> /* BSD's should have this */
+#endif
+
+#ifndef __APPLE__
+# if __BYTE_ORDER == __BIG_ENDIAN
+#  define le32(x) (((x & 0xFF000000) >> 24) | \
+                   ((x & 0x00FF0000) >> 8)  | \
+                   ((x & 0x0000FF00) << 8)  | \
+                   ((x & 0x000000FF) << 24))
+# else
+#  define le32(x) (x)
+# endif
 #endif
 
 struct gemtek_header {
@@ -77,22 +79,17 @@ struct machines {
     struct gemtek_header header;
 };
 
-enum {
-    TYPE_AR725W,
-    TYPE_AWRT600N,
-    TYPE_WRT110
-};
-
 struct machines mach_def[] = {
     { "Airlink101 AR725W", 0x340000,
-      { "GMTK", "1003", htole32(0x03000001), 0, 0,
+      { "GMTK", "1003", le32(0x03000001), 0, 0,
           0, "01\0\0",  "EN\0\0" }},
     { "Asante AWRT-1600N", 0x340000,
-      { "A600", "1005", htole32(0x03000001), 0, 0,
+      { "A600", "1005", le32(0x03000001), 0, 0,
           0, "01\0\0",  "EN\0\0" }},
-    { "Linksys WRT110",    0x3B0000,
-      { "GMTK", "1007", htole32(0x03040001), 0, 0,
-          0, "2\0\0\0", "EN\0\0" }}
+    { "Linksys WRT110",    0x340000,
+      { "GMTK", "1007", le32(0x03040001), 0, 0,
+          0, "2\0\0\0", "EN\0\0" }},
+    { 0 }
 };
 
 int main(int argc, char *argv[])
@@ -100,26 +97,26 @@ int main(int argc, char *argv[])
     unsigned long res, flen;
     struct gemtek_header my_hdr;
     FILE *f, *f_out;
-    int image_type = TYPE_AR725W;
+    int image_type = 0, index;
     uint8_t *buf;
     uint32_t crc;
 
     if(argc < 3) {
-        printf("mkheader_ar725w <uImage> <webflash image> [--awrt600n|--wrt110]\n");
-        printf("  --awrt600n: use magic for Asante AWRT-600N\n");
-        printf("  --wrt110  : use magic for Linksys WRT110\n");
+        fprintf(stderr, "mkheader_gemtek <uImage> <webflash image> [machine ID]\n");
+        fprintf(stderr, "  where [machine ID] is one of:\n");
+        for(index = 0; mach_def[index].desc != 0; index++) {
+            fprintf(stderr, "    %2d  %s", index, mach_def[index].desc);
+            if(index == 0)
+                fprintf(stderr, " (default)\n");
+            else
+                fprintf(stderr, "\n");
+        }
+
         exit(-1);
     }
 
     if(argc == 4) {
-        if(strcmp(argv[3], "--awrt600n") == 0) {
-            image_type = TYPE_AWRT600N;
-        } else if(strcmp(argv[3], "--wrt110") == 0) {
-            image_type = TYPE_WRT110;
-        } else {
-            fprintf(stderr, "Invalid option: %s\n", argv[3]);
-            exit(-1);
-        }
+        image_type = atoi(argv[3]);
     }
 
     printf("Opening %s...\n", argv[1]);
@@ -155,7 +152,7 @@ int main(int argc, char *argv[])
 
     printf("  Using %s magic\n", mach_def[image_type].desc);
 
-    my_hdr.imagesz = htole32(flen + 0x20);
+    my_hdr.imagesz = le32(flen + 0x20);
     memcpy(my_hdr.lang, "EN", 2);
 
     memcpy(buf, &my_hdr, 32);
@@ -163,7 +160,7 @@ int main(int argc, char *argv[])
     crc = crc32(0, buf, flen+32);
     printf("  CRC32: %08X\n", crc);
 
-    my_hdr.checksum = htole32(crc);
+    my_hdr.checksum = le32(crc);
     memcpy(buf, &my_hdr, 32);
 
     printf("  Writing...\n");

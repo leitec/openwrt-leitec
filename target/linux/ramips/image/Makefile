@@ -279,7 +279,7 @@ define BuildFirmware/AR725W
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
 		mkheader_gemtek "$(call sysupname,$(1),$(2))" \
-		 "$(call imgname,$(1),$(2))-factory.bin" || \
+		 "$(call imgname,$(1),$(2))-factory.bin" 0 || \
 		   rm -f "$(call imgname,$(1),$(2))-factory.bin"; \
 	fi
 endef
@@ -288,7 +288,7 @@ define BuildFirmware/AWRT600N
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
 		mkheader_gemtek "$(call sysupname,$(1),$(2))" \
-		 "$(call imgname,$(1),$(2))-factory.bin" --awrt600n || \
+		 "$(call imgname,$(1),$(2))-factory.bin" 1 || \
 		   rm -f "$(call imgname,$(1),$(2))-factory.bin"; \
 	fi
 endef
