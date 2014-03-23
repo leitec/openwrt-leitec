@@ -25,8 +25,8 @@
 
 #include "devices.h"
 
-#define AR725W_GPIO_WPS_BLUE_LED        8
-#define AR725W_GPIO_WPS_RED_LED         13
+#define AR725W_GPIO_WPS_RED_LED         8
+#define AR725W_GPIO_WPS_BLUE_LED        13
 
 #define AR725W_GPIO_POWER_LED           7
 
@@ -38,19 +38,19 @@
 
 static struct gpio_led ar725w_leds_gpio[] __initdata = {
         {
-            .name           = "ar725w:green:power",
-            .gpio           = AR725W_GPIO_POWER_LED,
-            .active_low     = 0,
+                .name           = "ar725w:green:power",
+                .gpio           = AR725W_GPIO_POWER_LED,
+                .active_low     = 0,
         },
         {
-            .name           = "ar725w:wps:red",
-            .gpio           = AR725W_GPIO_WPS_RED_LED,
-            .active_low     = 0,
+                .name           = "ar725w:red:wps",
+                .gpio           = AR725W_GPIO_WPS_RED_LED,
+                .active_low     = 1,
         },
         {
-            .name           = "ar725w:wps:blue",
-            .gpio           = AR725W_GPIO_WPS_BLUE_LED,
-            .active_low     = 0,
+                .name           = "ar725w:blue:wps",
+                .gpio           = AR725W_GPIO_WPS_BLUE_LED,
+                .active_low     = 1,
         },
 };
 
@@ -95,10 +95,10 @@ static void __init rt_ar725w_init(void)
          * Enable GPIOs 8, 10, 13 according to Gemtek
          * GPL sources (Linksys WRT110)
          *
-         * Flip bit 6 to <do something>
+         * Clear bit 6 to <do something>
          */
-	t = rt288x_sysc_rr(SYSC_REG_SYSTEM_CONFIG);
-        t &= ~(1 << 6);
+        t = rt288x_sysc_rr(SYSC_REG_SYSTEM_CONFIG);
+        t &= ~BIT(6);
         rt288x_sysc_wr(t, SYSC_REG_SYSTEM_CONFIG);
 
 	rt288x_register_wifi();
