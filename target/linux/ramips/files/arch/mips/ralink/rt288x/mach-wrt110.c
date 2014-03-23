@@ -25,14 +25,8 @@
 
 #include "devices.h"
 
-/*
- * I can't figure out how to turn these on.
- * They come on fine in the factory firmware
- * so there may be another GPIO or something
- * else ANDed with the LED pins here?
- */
-#define WRT110_GPIO_WPS_RED_LED         8
-#define WRT110_GPIO_WPS_BLUE_LED        13
+#define WRT110_GPIO_WPS_BLUE_LED        8
+#define WRT110_GPIO_WPS_AMBER_LED       13
 
 #define WRT110_GPIO_POWER_LED           12
 
@@ -48,30 +42,46 @@ static struct gpio_led wrt110_leds_gpio[] __initdata = {
             .gpio           = WRT110_GPIO_POWER_LED,
             .active_low     = 0,
         },
+        {
+            .name           = "wrt110:blue:wps",
+            .gpio           = WRT110_GPIO_WPS_BLUE_LED,
+            .active_low     = 1,
+        },
+        {
+            .name           = "wrt110:amber:wps",
+            .gpio           = WRT110_GPIO_WPS_AMBER_LED,
+            .active_low     = 1,
+        },
+
 };
 
 static struct gpio_keys_button wrt110_gpio_buttons[] __initdata = {
 	{
-		.desc		= "wps",
-		.type		= EV_KEY,
-		.code		= KEY_WPS_BUTTON,
-		.debounce_interval = WRT110_KEYS_DEBOUNCE_INTERVAL,
-		.gpio		= WRT110_GPIO_BUTTON_WPS,
-                .active_low     = 1,
+            .desc              = "wps",
+            .type              = EV_KEY,
+            .code              = KEY_WPS_BUTTON,
+            .debounce_interval = WRT110_KEYS_DEBOUNCE_INTERVAL,
+            .gpio              = WRT110_GPIO_BUTTON_WPS,
+            .active_low        = 1,
 	},
 	{
-		.desc		= "reset",
-		.type		= EV_KEY,
-		.code		= KEY_RESTART,
-		.debounce_interval = WRT110_KEYS_DEBOUNCE_INTERVAL,
-		.gpio		= WRT110_GPIO_BUTTON_RESET,
-		.active_low	= 1,
+            .desc              = "reset",
+            .type              = EV_KEY,
+            .code              = KEY_RESTART,
+            .debounce_interval = WRT110_KEYS_DEBOUNCE_INTERVAL,
+            .gpio              = WRT110_GPIO_BUTTON_RESET,
+            .active_low        = 1,
 	} 
 };
 
 static void __init rt_wrt110_init(void)
 {
-	rt288x_gpio_init(RT2880_GPIO_MODE_UART0);
+        u32 t;
+
+	rt288x_gpio_init(
+                RT2880_GPIO_MODE_I2C |
+                RT2880_GPIO_MODE_UART0 |
+                RT2880_GPIO_MODE_SPI);
 
 	rt288x_register_flash(0);
 
@@ -81,6 +91,16 @@ static void __init rt_wrt110_init(void)
 	ramips_register_gpio_buttons(-1, WRT110_KEYS_POLL_INTERVAL,
 				     ARRAY_SIZE(wrt110_gpio_buttons),
 				     wrt110_gpio_buttons);
+
+        /* 
+         * Enable GPIOs 8, 10, 13 according to Gemtek
+         * GPL sources (Linksys WRT110)
+         *
+         * Clear bit 6 to <do something>
+         */
+        t = rt288x_sysc_rr(SYSC_REG_SYSTEM_CONFIG);
+        t &= ~BIT(6);
+        rt288x_sysc_wr(t, SYSC_REG_SYSTEM_CONFIG);
 
 	rt288x_register_wifi();
 
