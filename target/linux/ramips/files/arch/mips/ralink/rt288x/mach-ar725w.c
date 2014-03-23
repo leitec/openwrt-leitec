@@ -25,14 +25,8 @@
 
 #include "devices.h"
 
-/*
- * I can't figure out how to turn these on.
- * They come on fine in the factory firmware
- * so there may be another GPIO or something
- * else ANDed with the LED pins here?
- */
-#define AR725W_GPIO_WPS_RED_LED         8
-#define AR725W_GPIO_WPS_BLUE_LED        13
+#define AR725W_GPIO_WPS_BLUE_LED        8
+#define AR725W_GPIO_WPS_RED_LED         13
 
 #define AR725W_GPIO_POWER_LED           7
 
@@ -46,6 +40,16 @@ static struct gpio_led ar725w_leds_gpio[] __initdata = {
         {
             .name           = "ar725w:green:power",
             .gpio           = AR725W_GPIO_POWER_LED,
+            .active_low     = 0,
+        },
+        {
+            .name           = "ar725w:wps:red",
+            .gpio           = AR725W_GPIO_WPS_RED_LED,
+            .active_low     = 0,
+        },
+        {
+            .name           = "ar725w:wps:blue",
+            .gpio           = AR725W_GPIO_WPS_BLUE_LED,
             .active_low     = 0,
         },
 };
@@ -71,7 +75,12 @@ static struct gpio_keys_button ar725w_gpio_buttons[] __initdata = {
 
 static void __init rt_ar725w_init(void)
 {
-	rt288x_gpio_init(RT2880_GPIO_MODE_UART0);
+        u32 t;
+
+	rt288x_gpio_init(
+                RT2880_GPIO_MODE_I2C |
+                RT2880_GPIO_MODE_UART0 |
+                RT2880_GPIO_MODE_SPI);
 
 	rt288x_register_flash(0);
 
@@ -81,6 +90,16 @@ static void __init rt_ar725w_init(void)
 	ramips_register_gpio_buttons(-1, AR725W_KEYS_POLL_INTERVAL,
 				     ARRAY_SIZE(ar725w_gpio_buttons),
 				     ar725w_gpio_buttons);
+
+        /* 
+         * Enable GPIOs 8, 10, 13 according to Gemtek
+         * GPL sources (Linksys WRT110)
+         *
+         * Flip bit 6 to <do something>
+         */
+	t = rt288x_sysc_rr(SYSC_REG_SYSTEM_CONFIG);
+        t &= ~(1 << 6);
+        rt288x_sysc_wr(t, SYSC_REG_SYSTEM_CONFIG);
 
 	rt288x_register_wifi();
 
