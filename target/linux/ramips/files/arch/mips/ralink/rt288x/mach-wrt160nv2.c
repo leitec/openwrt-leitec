@@ -48,7 +48,7 @@ static struct gpio_led wrt160nv2_leds_gpio[] __initdata = {
                 .active_low     = 1,
         },
         {
-                .name           = "wrt160nv2:green:wps",
+                .name           = "wrt160nv2:blue:wps",
                 .gpio           = WRT160NV2_GPIO_WPS_BLUE_LED,
                 .active_low     = 1,
         },
