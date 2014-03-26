@@ -303,18 +303,32 @@ define BuildFirmware/WRT110
 	fi
 endef
 
+# The WRT160N v2 uses a wacky combination of uImage and TRX.
+# u-Boot is actually modified to allow that.
+#
+# We can get away with packing only the kernel in the TRX for
+# booting purposes, but if we want to make a firmware image
+# that the factory firmware can use we have to stick the
+# rootfs in there, too.
 mtdlayout_wrt160nv2=256k(u-boot)ro,896k(kernel),2880k(rootfs),64k(nvram),3776k@0x40000(firmware)
 mtd_wrt160nv2_kernel_part_size=917504
 mtd_wrt160nv2_rootfs_part_size=2949120
 
 define BuildFirmware/WRT160NV2
 	$(call PatchKernelLzma,$(2),$(call mkcmdline,$(3),ttyS1,115200) $(call  mkmtd/phys,$(mtdlayout_wrt160nv2)))
-	trx -o $(KDIR)/vmlinux-$(2).trx -f $(KDIR)/vmlinux-$(2).bin.lzma
+	dd if=$(KDIR)/vmlinux-$(2).bin.lzma \
+	   of=$(KDIR)/vmlinux-$(2).bin.lzma.pad \
+	   bs=`expr $(mtd_wrt160nv2_kernel_part_size) - 92` conv=sync
+
+	trx -o $(KDIR)/image-$(2).trx \
+	    -f $(KDIR)/vmlinux-$(2).bin.lzma.pad \
+	    -f $(KDIR)/root.$(1)
+
 	$(eval imagename=MIPS OpenWrt Linux-$(LINUX_VERSION))
 	mkimage -A mips -O linux -T kernel -C lzma $(call kernel_entry)\
 		-n "$(imagename)" \
-		-d $(KDIR)/vmlinux-$(2).trx $(KDIR)/vmlinux-$(2).uImage
-	$(call Sysupgrade/KRuImage,$(1),$(2),$(mtd_wrt160nv2_kernel_part_size),$(mtd_wrt160nv2_rootfs_part_size))
+		-d $(KDIR)/image-$(2).trx "$(call sysupname,$(1),$(2))"
+#	$(call Sysupgrade/KRuImage,$(1),$(2),$(mtd_wrt160nv2_kernel_part_size),$(mtd_wrt160nv2_rootfs_part_size))
 endef
 
 define BuildFirmware/FONERA20N
