@@ -125,6 +125,9 @@ get_status_led() {
 	wrt110)
 		status_led="wrt110:blue:power"
 		;;
+	wrt160nv2)
+		status_led="wrt160nv2:blue:power"
+		;;
 	ur-336un)
 		status_led="ur336:green:wps"
 		;;

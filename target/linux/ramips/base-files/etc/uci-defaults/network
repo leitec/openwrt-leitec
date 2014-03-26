@@ -76,7 +76,8 @@ ramips_setup_interfaces()
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		;;
 
-	v11st-fe)
+	v11st-fe | \
+        wrt160nv2)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		ucidef_add_switch "switch0" "1" "1"
 		ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 5t"
@@ -232,6 +233,11 @@ ramips_setup_macs()
 	wli-tx4-ag300n)
 		lan_mac=$(ramips_get_mac_binary factory 4)
 		;;
+
+        wrt160nv2)
+                lan_mac=$(ramips_get_mac_nvram "nvram" "mac")
+                wan_mac=$(/usr/sbin/maccalc add "$lan_mac" 1)
+                ;;
 
 	esac
 

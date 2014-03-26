@@ -122,6 +122,9 @@ ramips_board_name() {
 	*"Linksys WRT110")
 		name="wrt110"
 		;;
+        *"Linksys WRT160Nv2")
+                name="wrt160nv2"
+                ;;
 	*"MoFi Network MOFI3500-3GN")
 		name="mofi3500-3gn"
 		;;

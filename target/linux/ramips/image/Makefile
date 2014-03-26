@@ -303,6 +303,20 @@ define BuildFirmware/WRT110
 	fi
 endef
 
+mtdlayout_wrt160nv2=256k(u-boot)ro,896k(kernel),2880k(rootfs),64k(nvram),3776k@0x40000(firmware)
+mtd_wrt160nv2_kernel_part_size=917504
+mtd_wrt160nv2_rootfs_part_size=2949120
+
+define BuildFirmware/WRT160NV2
+	$(call PatchKernelLzma,$(2),$(call mkcmdline,$(3),ttyS1,115200) $(call  mkmtd/phys,$(mtdlayout_wrt160nv2)))
+	trx -o $(KDIR)/vmlinux-$(2).trx -f $(KDIR)/vmlinux-$(2).bin.lzma
+	$(eval imagename=MIPS OpenWrt Linux-$(LINUX_VERSION))
+	mkimage -A mips -O linux -T kernel -C lzma $(call kernel_entry)\
+		-n "$(imagename)" \
+		-d $(KDIR)/vmlinux-$(2).trx $(KDIR)/vmlinux-$(2).uImage
+	$(call Sysupgrade/KRuImage,$(1),$(2),$(mtd_wrt160nv2_kernel_part_size),$(mtd_wrt160nv2_rootfs_part_size))
+endef
+
 define BuildFirmware/FONERA20N
 	$(call BuildFirmware/GENERIC_8M,$(1),fonera20n,FONERA20N,ttyS1,57600,phys)
 	$(call BuildFirmware/Edimax,$(1),fonera20n,RSDK,NL1T,0x50000,0xc0000)
@@ -464,6 +478,10 @@ endef
 
 define Image/Build/Profile/WRT110
 	$(call Image/Build/Template/$(fs_squash)/$(1),WRT110,wrt110,WRT110)
+endef
+
+define Image/Build/Profile/WRT160NV2
+	$(call Image/Build/Template/$(fs_squash)/$(1),WRT160NV2,wrt160nv2,WRT160NV2)
 endef
 
 define Image/Build/Profile/F5D8235V1

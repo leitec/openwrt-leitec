@@ -21,6 +21,11 @@ config RT288X_MACH_WRT110
 	select RALINK_DEV_GPIO_BUTTONS
 	select RALINK_DEV_GPIO_LEDS
 
+config RT288X_MACH_WRT160NV2
+	bool "Linksys WRT160NV2 board support"
+	select RALINK_DEV_GPIO_BUTTONS
+	select RALINK_DEV_GPIO_LEDS
+
 config RT288X_MACH_V11ST_FE
 	bool "Ralink V11ST-FE board support"
 	select HW_HAS_PCI

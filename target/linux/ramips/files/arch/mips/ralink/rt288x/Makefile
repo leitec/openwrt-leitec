@@ -19,4 +19,5 @@ obj-$(CONFIG_RT288X_MACH_RT_N15)	+= mach-rt-n15.o
 obj-$(CONFIG_RT288X_MACH_V11ST_FE)	+= mach-v11st-fe.o
 obj-$(CONFIG_RT288X_MACH_WLI_TX4_AG300N) += mach-wli-tx4-ag300n.o
 obj-$(CONFIG_RT288X_MACH_WRT110)	+= mach-wrt110.o
+obj-$(CONFIG_RT288X_MACH_WRT160NV2)	+= mach-wrt160nv2.o
 obj-$(CONFIG_RT288X_MACH_WZR_AGL300NH)	+= mach-wzr-agl300nh.o
