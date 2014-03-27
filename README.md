@@ -6,12 +6,12 @@ back out of certain upstream changes, but most importantly adds support for
 some older Ralink RT2880-based routers previously unsupported by OpenWRT and/or
 other alternative firmware.
 
-Fully supported:
+**Fully supported:**
 
 - Airlink101 AR725W
 - Asante SmartHub AWRT-600N
 
-Supported with limitations:
+**Supported with limitations:**
 
 - Linksys WRT100 (not yet tested)
 - Linksys WRT110
