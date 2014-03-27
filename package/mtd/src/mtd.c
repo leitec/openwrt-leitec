@@ -525,6 +525,10 @@ static void usage(void)
 	    fprintf(stderr,
 	"        fixseama                fix the checksum in a seama header on first boot\n");
 	}
+	if (mtd_fixuimage) {
+	    fprintf(stderr,
+	"        fixuimage               fix the checksum on a WRT160Nv2 header on first boot\n");
+	}
     fprintf(stderr,
 	"Following options are available:\n"
 	"        -q                      quiet mode (once: no [w] on writing,\n"
@@ -580,6 +584,7 @@ int main (int argc, char **argv)
 		CMD_JFFS2WRITE,
 		CMD_FIXTRX,
 		CMD_FIXSEAMA,
+		CMD_FIXUIMAGE,
 	} cmd = -1;
 
 	erase[0] = NULL;
@@ -671,6 +676,9 @@ int main (int argc, char **argv)
 	} else if (((strcmp(argv[0], "fixseama") == 0) && (argc == 2)) && mtd_fixseama) {
 		cmd = CMD_FIXSEAMA;
 		device = argv[1];
+	} else if (((strcmp(argv[0], "fixuimage") == 0) && (argc == 2)) && mtd_fixuimage) {
+		cmd = CMD_FIXUIMAGE;
+		device = argv[1];
 	} else if ((strcmp(argv[0], "write") == 0) && (argc == 3)) {
 		cmd = CMD_WRITE;
 		device = argv[2];
@@ -750,6 +758,10 @@ int main (int argc, char **argv)
 		case CMD_FIXSEAMA:
 			if (mtd_fixseama)
 			    mtd_fixseama(device, 0);
+			break;
+                case CMD_FIXUIMAGE:
+			if (mtd_fixuimage)
+			    mtd_fixuimage(device, 0);
 			break;
 	}
 
