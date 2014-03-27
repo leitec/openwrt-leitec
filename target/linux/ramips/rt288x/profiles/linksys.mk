@@ -5,14 +5,24 @@
 # See /LICENSE for more information.
 #
 
+define Profile/WRT110
+       NAME:=Linksys WRT110
+       PACKAGES:=kmod-switch-ip17xx kmod-swconfig swconfig
+endef
+
+define Profile/WRT110/Description
+       Package set for Linksys WRT110
+endef
+
+$(eval $(call Profile,WRT110))
+
 define Profile/WRT160NV2
        NAME:=Linksys WRT160N v2
        PACKAGES:=kmod-switch-rtl8306 kmod-swconfig swconfig
 endef
 
 define Profile/WRT160NV2/Description
-       Package set for Linksys WRT160NV2
+       Package set for Linksys WRT160N v2
 endef
 
 $(eval $(call Profile,WRT160NV2))
-
