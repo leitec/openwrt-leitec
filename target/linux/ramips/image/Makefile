@@ -310,12 +310,39 @@ endef
 # booting purposes, but if we want to make a firmware image
 # that the factory firmware can use we have to stick the
 # rootfs in there, too.
-mtdlayout_wrt160nv2=256k(u-boot)ro,896k(kernel),2880k(rootfs),64k(nvram),3776k@0x40000(firmware)
+mtdlayout_wrt160nv2=256k(u-boot)ro,896k(kernel),2880k(rootfs),64k(nvram)ro,3776k@0x40000(firmware)
 mtd_wrt160nv2_kernel_part_size=917504
 mtd_wrt160nv2_rootfs_part_size=2949120
 
 define BuildFirmware/WRT160NV2
 	$(call PatchKernelLzma,$(2),$(call mkcmdline,$(3),ttyS1,115200) $(call  mkmtd/phys,$(mtdlayout_wrt160nv2)))
+
+	$(eval imagename=MIPS OpenWrt Linux-$(LINUX_VERSION))
+
+	# build a sysupgrade-compatible image. the uImage
+	# and TRX contain only the kernel. this image needs
+	# no header adjustment post-firstboot
+	
+	trx -o $(KDIR)/vmlinux-$(2).trx \
+	    -f $(KDIR)/vmlinux-$(2).bin.lzma
+
+	mkimage -A mips -O linux -T kernel -C lzma $(call kernel_entry)\
+		-n "$(imagename)" \
+		-d $(KDIR)/vmlinux-$(2).trx $(KDIR)/vmlinux-$(2).uImage
+
+	$(call Sysupgrade/KRuImage,$(1),$(2),$(mtd_wrt160nv2_kernel_part_size),$(mtd_wrt160nv2_rootfs_part_size))
+	# stuff for web-compatible image
+	#
+	# the web flash needs a TRX with both kernel and rootfs,
+	# and the uImage wraps the whole TRX. We pad the kernel
+	# so that the rootfs partition lines up still
+	#
+	# The uImage header needs to be adjusted post-firstboot
+	# otherwise the jffs2 formatting causes boot-time CRC check
+	# to fail.
+	
+	# 92 = trx header (28) + uImage header (64)
+	# XXX check if image is too big
 	dd if=$(KDIR)/vmlinux-$(2).bin.lzma \
 	   of=$(KDIR)/vmlinux-$(2).bin.lzma.pad \
 	   bs=`expr $(mtd_wrt160nv2_kernel_part_size) - 92` conv=sync
@@ -324,11 +351,18 @@ define BuildFirmware/WRT160NV2
 	    -f $(KDIR)/vmlinux-$(2).bin.lzma.pad \
 	    -f $(KDIR)/root.$(1)
 
-	$(eval imagename=MIPS OpenWrt Linux-$(LINUX_VERSION))
 	mkimage -A mips -O linux -T kernel -C lzma $(call kernel_entry)\
 		-n "$(imagename)" \
-		-d $(KDIR)/image-$(2).trx "$(call sysupname,$(1),$(2))"
-#	$(call Sysupgrade/KRuImage,$(1),$(2),$(mtd_wrt160nv2_kernel_part_size),$(mtd_wrt160nv2_rootfs_part_size))
+		-d $(KDIR)/image-$(2).trx $(KDIR)/image-$(2).uImage
+	
+	# append web/tftp "code" header 
+	# the "-code.bin" is something the TFTP recovery requires
+	
+	addpattern -g \
+	           -p "N160" \
+	           -v v2.0.02 \
+		   -i $(KDIR)/image-$(2).uImage \
+		   -o "$(call imgname,$(1),$(2))-factory-code.bin"
 endef
 
 define BuildFirmware/FONERA20N

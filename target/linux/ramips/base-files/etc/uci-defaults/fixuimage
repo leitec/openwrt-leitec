@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Copyright (C) 2012 OpenWrt.org
+#
+
+. /lib/ramips.sh
+
+fix_uimage_header() {
+	local part=$1
+
+	mtd fixuimage $part
+}
+
+board=$(ramips_board_name)
+
+case "$board" in
+wrt160nv2)
+	fix_uimage_header kernel
+	;;
+esac
