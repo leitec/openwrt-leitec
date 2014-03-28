@@ -18,6 +18,8 @@
  * (the only part the bootloader cares about) and recalculates
  * the CRCs based on that.
  *
+ * Copyright (C) 2014 Claudio Leite <leitec@staticky.com>
+ *
  * Based on the seama fixup code:
  *   Copyright (C) 2011-2012 Gabor Juhos <juhosg@openwrt.org>
  *
