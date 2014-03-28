@@ -235,7 +235,7 @@ ramips_setup_macs()
 		;;
 
         wrt160nv2)
-                lan_mac=$(ramips_get_mac_nvram "nvram" "mac")
+                lan_mac=$(ramips_get_mac_nvram u-boot "mac")
                 wan_mac=$(/usr/sbin/maccalc add "$lan_mac" 1)
                 ;;
 
