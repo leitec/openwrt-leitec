@@ -25,7 +25,7 @@
 
 #include "devices.h"
 
-#define WRT160NV2_GPIO_WPS_ORANGE_LED      8
+#define WRT160NV2_GPIO_WPS_AMBER_LED       8
 #define WRT160NV2_GPIO_WPS_BLUE_LED       13
 
 #define WRT160NV2_GPIO_POWER_LED          12
@@ -43,8 +43,8 @@ static struct gpio_led wrt160nv2_leds_gpio[] __initdata = {
                 .active_low     = 1,
         },
         {
-                .name           = "wrt160nv2:orange:wps",
-                .gpio           = WRT160NV2_GPIO_WPS_ORANGE_LED,
+                .name           = "wrt160nv2:amber:wps",
+                .gpio           = WRT160NV2_GPIO_WPS_AMBER_LED,
                 .active_low     = 1,
         },
         {
