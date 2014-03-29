@@ -119,6 +119,9 @@ ramips_board_name() {
 	*"La Fonera 2.0N")
 		name="fonera20n"
 		;;
+	*"Linksys WRT100")
+		name="wrt100"
+		;;
 	*"Linksys WRT110")
 		name="wrt110"
 		;;

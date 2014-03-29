@@ -6,12 +6,12 @@
 #
 
 define Profile/WRT110
-       NAME:=Linksys WRT110
+       NAME:=Linksys WRT100/WRT110
        PACKAGES:=kmod-switch-ip17xx kmod-swconfig swconfig
 endef
 
 define Profile/WRT110/Description
-       Package set for Linksys WRT110
+       Package set for Linksys WRT100/WRT110
 endef
 
 $(eval $(call Profile,WRT110))

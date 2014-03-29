@@ -526,6 +526,7 @@ endef
 
 define Image/Build/Profile/WRT110
 	$(call Image/Build/Template/$(fs_squash)/$(1),WRT110,wrt110,WRT110)
+	$(call Image/Build/Template/$(fs_squash)/$(1),WRT110,wrt100,WRT100)
 endef
 
 define Image/Build/Profile/WRT160NV2

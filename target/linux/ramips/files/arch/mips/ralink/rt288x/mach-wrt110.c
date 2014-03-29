@@ -1,5 +1,5 @@
 /*
- *  Linksys WRT110 support
+ *  Linksys WRT100/WRT110 support
  *
  *  Copyright (C) 2014 Claudio Leite <leitec@staticky.com>
  *
@@ -27,14 +27,17 @@
 
 #define WRT110_GPIO_WPS_BLUE_LED        8
 #define WRT110_GPIO_WPS_AMBER_LED       13
-
 #define WRT110_GPIO_POWER_LED           12
 
-#define WRT110_GPIO_BUTTON_WPS	        0
-#define WRT110_GPIO_BUTTON_RESET        9
+#define WRT100_GPIO_SECURITY_GREEN_LED  8
+#define WRT100_GPIO_SECURITY_AMBER_LED  13
+#define WRT100_GPIO_POWER_LED           12
 
-#define WRT110_KEYS_POLL_INTERVAL	20
-#define WRT110_KEYS_DEBOUNCE_INTERVAL	(3 * WRT110_KEYS_POLL_INTERVAL)
+#define WRT1X0_GPIO_BUTTON_WPS	        0
+#define WRT1X0_GPIO_BUTTON_RESET        9
+
+#define WRT1X0_KEYS_POLL_INTERVAL	20
+#define WRT1X0_KEYS_DEBOUNCE_INTERVAL	(3 * WRT1X0_KEYS_POLL_INTERVAL)
 
 static struct gpio_led wrt110_leds_gpio[] __initdata = {
         {
@@ -55,26 +58,45 @@ static struct gpio_led wrt110_leds_gpio[] __initdata = {
 
 };
 
-static struct gpio_keys_button wrt110_gpio_buttons[] __initdata = {
+static struct gpio_led wrt100_leds_gpio[] __initdata = {
+        {
+            .name           = "wrt100:green:power",
+            .gpio           = WRT100_GPIO_POWER_LED,
+            .active_low     = 0,
+        },
+        {
+            .name           = "wrt100:green:security",
+            .gpio           = WRT100_GPIO_SECURITY_GREEN_LED,
+            .active_low     = 1,
+        },
+        {
+            .name           = "wrt100:amber:security",
+            .gpio           = WRT100_GPIO_SECURITY_AMBER_LED,
+            .active_low     = 1,
+        },
+
+};
+
+static struct gpio_keys_button wrt1x0_gpio_buttons[] __initdata = {
 	{
             .desc              = "wps",
             .type              = EV_KEY,
             .code              = KEY_WPS_BUTTON,
-            .debounce_interval = WRT110_KEYS_DEBOUNCE_INTERVAL,
-            .gpio              = WRT110_GPIO_BUTTON_WPS,
+            .debounce_interval = WRT1X0_KEYS_DEBOUNCE_INTERVAL,
+            .gpio              = WRT1X0_GPIO_BUTTON_WPS,
             .active_low        = 1,
 	},
 	{
             .desc              = "reset",
             .type              = EV_KEY,
             .code              = KEY_RESTART,
-            .debounce_interval = WRT110_KEYS_DEBOUNCE_INTERVAL,
-            .gpio              = WRT110_GPIO_BUTTON_RESET,
+            .debounce_interval = WRT1X0_KEYS_DEBOUNCE_INTERVAL,
+            .gpio              = WRT1X0_GPIO_BUTTON_RESET,
             .active_low        = 1,
 	} 
 };
 
-static void __init rt_wrt110_init(void)
+static void __init rt_wrt1x0_init(int type)
 {
         u32 t;
 
@@ -85,12 +107,16 @@ static void __init rt_wrt110_init(void)
 
 	rt288x_register_flash(0);
 
-	ramips_register_gpio_leds(-1, ARRAY_SIZE(wrt110_leds_gpio),
-				  wrt110_leds_gpio);
+        if(type == 0) 
+            ramips_register_gpio_leds(-1, ARRAY_SIZE(wrt100_leds_gpio),
+                                      wrt100_leds_gpio);
+        else
+            ramips_register_gpio_leds(-1, ARRAY_SIZE(wrt110_leds_gpio),
+                                      wrt110_leds_gpio);
 
-	ramips_register_gpio_buttons(-1, WRT110_KEYS_POLL_INTERVAL,
-				     ARRAY_SIZE(wrt110_gpio_buttons),
-				     wrt110_gpio_buttons);
+        ramips_register_gpio_buttons(-1, WRT1X0_KEYS_POLL_INTERVAL,
+                                     ARRAY_SIZE(wrt1x0_gpio_buttons),
+                                     wrt1x0_gpio_buttons);
 
         /* 
          * Enable GPIOs 8, 10, 13 according to Gemtek
@@ -115,4 +141,15 @@ static void __init rt_wrt110_init(void)
 	rt288x_register_wdt();
 }
 
+static void __init rt_wrt100_init(void)
+{
+    rt_wrt1x0_init(0);
+}
+
+static void __init rt_wrt110_init(void)
+{
+    rt_wrt1x0_init(1);
+}
+
+MIPS_MACHINE(RAMIPS_MACH_WRT100, "WRT100", "Linksys WRT100", rt_wrt100_init);
 MIPS_MACHINE(RAMIPS_MACH_WRT110, "WRT110", "Linksys WRT110", rt_wrt110_init);

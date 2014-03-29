@@ -16,6 +16,7 @@ preinit_set_mac_address() {
 		ifconfig eth0 hw ether $mac 2>/dev/null
 		;;
         ar725w |\
+        wrt100 |\
         wrt110)
                 mac=$(ramips_get_mac_binary u-boot 262148)
                 ifconfig eth0 hw ether $mac 2>/dev/null

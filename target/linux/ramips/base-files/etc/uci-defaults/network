@@ -87,6 +87,7 @@ ramips_setup_interfaces()
         ar725w | \
 	rt-n15 | \
 	wl-351 | \
+        wrt100 | \
         wrt110)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		ucidef_add_switch "switch0" "1" "1"
@@ -198,6 +199,7 @@ ramips_setup_macs()
 
 	ar725w | \
 	f5d8235-v2 | \
+        wrt100 | \
         wrt110)
 		lan_mac=$(ramips_get_mac_binary "u-boot" 262148)
 		wan_mac=$(/usr/sbin/maccalc add "$lan_mac" 1)
