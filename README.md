@@ -13,7 +13,7 @@ other alternative firmware.
 
 **Supported with limitations:**
 
-- Linksys WRT100 (not yet tested)
+- Linksys WRT100
 - Linksys WRT110
 - Linksys WRT160N v2
 
