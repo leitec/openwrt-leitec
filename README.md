@@ -8,6 +8,7 @@ other alternative firmware.
 
 **Fully supported:**
 
+_Now supported upstream_
 - Airlink101 AR725W
 - Asante SmartHub AWRT-600N
 
