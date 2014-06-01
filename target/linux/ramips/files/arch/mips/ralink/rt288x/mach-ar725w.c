@@ -70,7 +70,7 @@ static struct gpio_keys_button ar725w_gpio_buttons[] __initdata = {
 		.debounce_interval = AR725W_KEYS_DEBOUNCE_INTERVAL,
 		.gpio		= AR725W_GPIO_BUTTON_RESET,
 		.active_low	= 1,
-	} 
+	}
 };
 
 static void __init rt_ar725w_init(void)
@@ -91,7 +91,7 @@ static void __init rt_ar725w_init(void)
 				     ARRAY_SIZE(ar725w_gpio_buttons),
 				     ar725w_gpio_buttons);
 
-        /* 
+        /*
          * Enable GPIOs 8, 10, 13 according to Gemtek
          * GPL sources (Linksys WRT110)
          *

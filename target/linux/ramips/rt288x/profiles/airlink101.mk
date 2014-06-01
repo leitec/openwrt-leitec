@@ -15,4 +15,3 @@ define Profile/AR725W/Description
 endef
 
 $(eval $(call Profile,AR725W))
-

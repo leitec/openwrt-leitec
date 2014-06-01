@@ -264,7 +264,7 @@ endef
 # erasing NVRAM doesn't seem to be a problem.
 # very little appears to be in "factory_nvram" -- the only HW
 # info is in the u-boot partition @ 0x40000.
-# 
+#
 # this does mean you lose your prefs. if reverting to the
 # factory FW, but you can back that up first if that's
 # important.
@@ -330,7 +330,7 @@ define BuildFirmware/WRT160NV2
 	# build a sysupgrade-compatible image. the uImage
 	# and TRX contain only the kernel. this image needs
 	# no header adjustment post-firstboot
-	
+
 	trx -o $(KDIR)/vmlinux-$(2).trx \
 	    -f $(KDIR)/vmlinux-$(2).bin.lzma
 
@@ -348,7 +348,7 @@ define BuildFirmware/WRT160NV2
 	# The uImage header needs to be adjusted post-firstboot
 	# otherwise the jffs2 formatting causes boot-time CRC check
 	# to fail.
-	
+
 	# 92 = trx header (28) + uImage header (64)
 	# XXX check if image is too big
 	dd if=$(KDIR)/vmlinux-$(2).bin.lzma \
@@ -362,10 +362,10 @@ define BuildFirmware/WRT160NV2
 	mkimage -A mips -O linux -T kernel -C lzma $(call kernel_entry)\
 		-n "$(imagename)" \
 		-d $(KDIR)/image-$(2).trx $(KDIR)/image-$(2).uImage
-	
-	# append web/tftp "code" header 
+
+	# append web/tftp "code" header
 	# the "-code.bin" is something the TFTP recovery requires
-	
+
 	addpattern -g \
 	           -p "N160" \
 	           -v v2.0.02 \

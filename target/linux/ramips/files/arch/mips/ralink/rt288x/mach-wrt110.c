@@ -93,7 +93,7 @@ static struct gpio_keys_button wrt1x0_gpio_buttons[] __initdata = {
             .debounce_interval = WRT1X0_KEYS_DEBOUNCE_INTERVAL,
             .gpio              = WRT1X0_GPIO_BUTTON_RESET,
             .active_low        = 1,
-	} 
+	}
 };
 
 static void __init rt_wrt1x0_init(int type)
@@ -107,7 +107,7 @@ static void __init rt_wrt1x0_init(int type)
 
 	rt288x_register_flash(0);
 
-        if(type == 0) 
+        if(type == 0)
             ramips_register_gpio_leds(-1, ARRAY_SIZE(wrt100_leds_gpio),
                                       wrt100_leds_gpio);
         else
@@ -118,7 +118,7 @@ static void __init rt_wrt1x0_init(int type)
                                      ARRAY_SIZE(wrt1x0_gpio_buttons),
                                      wrt1x0_gpio_buttons);
 
-        /* 
+        /*
          * Enable GPIOs 8, 10, 13 according to Gemtek
          * GPL sources (Linksys WRT110)
          *

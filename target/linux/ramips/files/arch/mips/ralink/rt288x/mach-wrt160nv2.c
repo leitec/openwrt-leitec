@@ -70,7 +70,7 @@ static struct gpio_keys_button wrt160nv2_gpio_buttons[] __initdata = {
 		.debounce_interval = WRT160NV2_KEYS_DEBOUNCE_INTERVAL,
 		.gpio		= WRT160NV2_GPIO_BUTTON_RESET,
 		.active_low	= 1,
-	} 
+	}
 };
 
 static void __init rt_wrt160nv2_init(void)
@@ -92,7 +92,7 @@ static void __init rt_wrt160nv2_init(void)
 				     ARRAY_SIZE(wrt160nv2_gpio_buttons),
 				     wrt160nv2_gpio_buttons);
 
-        /* 
+        /*
          * Enable GPIOs 8, 10, 13 according to Gemtek
          * GPL sources (Linksys WRT110)
          *
