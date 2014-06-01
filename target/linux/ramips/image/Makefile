@@ -276,7 +276,7 @@ mtdlayout_ar725w=320k(u-boot)ro,896k(kernel),2880k(rootfs),3776k@0x50000(firmwar
 mtd_ar725w_kernel_part_size=917504
 mtd_ar725w_rootfs_part_size=2949120
 define BuildFirmware/AR725W
-	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
+	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
 		mkheader_gemtek "$(call sysupname,$(1),$(2))" \
 		 "$(call imgname,$(1),$(2))-factory.bin" 0 || \
@@ -284,8 +284,12 @@ define BuildFirmware/AR725W
 	fi
 endef
 
+define BuildFirmware/AR725W/initramfs
+	$(call BuildFirmware/Generic/initramfs,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
+endef
+
 define BuildFirmware/AWRT600N
-	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
+	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
 		mkheader_gemtek "$(call sysupname,$(1),$(2))" \
 		 "$(call imgname,$(1),$(2))-factory.bin" 1 || \
@@ -293,9 +297,13 @@ define BuildFirmware/AWRT600N
 	fi
 endef
 
+define BuildFirmware/AWRT600N/initramfs
+	$(call BuildFirmware/Generic/initramfs,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
+endef
+
 # Linksys WRT110's layout is the same as the AR725W
 define BuildFirmware/WRT110
-	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
+	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call mkmtd/phys,$(mtdlayout_ar725w)),$(mtd_ar725w_kernel_part_size),$(mtd_ar725w_rootfs_part_size))
 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
 		mkheader_gemtek "$(call sysupname,$(1),$(2))" \
 		 "$(call imgname,$(1),$(2))-factory.bin" 2 || \
@@ -315,7 +323,7 @@ mtd_wrt160nv2_kernel_part_size=917504
 mtd_wrt160nv2_rootfs_part_size=2949120
 
 define BuildFirmware/WRT160NV2
-	$(call PatchKernelLzma,$(2),$(call mkcmdline,$(3),ttyS1,115200) $(call  mkmtd/phys,$(mtdlayout_wrt160nv2)))
+	$(call PatchKernelLzma,$(2),$(call mkcmdline,$(3),ttyS1,115200) $(call mkmtd/phys,$(mtdlayout_wrt160nv2)))
 
 	$(eval imagename=MIPS OpenWrt Linux-$(LINUX_VERSION))
 
