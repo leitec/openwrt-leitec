@@ -305,6 +305,16 @@ $(call Package/iptables/Default)
   MENU:=1
 endef
 
+define Package/ip6tables-extra
+$(call Package/iptables/Default)
+  DEPENDS:=ip6tables +kmod-ip6tables-extra
+  TITLE:=IPv6 header matching modules
+endef
+
+define Package/ip6tables-mod-extra/description
+iptables header matching modules for IPv6
+endef
+
 define Package/libiptc
 $(call Package/iptables/Default)
   SECTION:=libs
@@ -472,6 +482,7 @@ $(eval $(call BuildPlugin,iptables-mod-tproxy,$(IPT_TPROXY-m)))
 $(eval $(call BuildPlugin,iptables-mod-tee,$(IPT_TEE-m)))
 $(eval $(call BuildPlugin,iptables-mod-u32,$(IPT_U32-m)))
 $(eval $(call BuildPackage,ip6tables))
+$(eval $(call BuildPlugin,ip6tables-extra,$(IPT_IPV6_EXTRA-m)))
 $(eval $(call BuildPackage,libiptc))
 $(eval $(call BuildPackage,libip4tc))
 $(eval $(call BuildPackage,libip6tc))
