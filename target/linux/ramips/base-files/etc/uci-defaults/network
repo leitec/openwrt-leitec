@@ -85,7 +85,7 @@ ramips_setup_interfaces()
 		;;
 
 	ar670w | \
-        ar725w | \
+	ar725w | \
 	rt-n15 | \
 	wl-351 | \
         wrt100 | \

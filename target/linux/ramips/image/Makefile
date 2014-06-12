@@ -255,7 +255,7 @@ define BuildFirmware/F5D8235
 endef
 
 # Airlink101 AR670W
-# 
+#
 # Seems to use a hacked u-Boot that doesn't take an uImage, just an LZMA kernel image
 #
 # It also doesn't seem possible (or at least obvious) to drop to a u-Boot prompt,
