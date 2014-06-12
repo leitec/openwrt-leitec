@@ -26,7 +26,7 @@ endif
 
 ifeq ($(CONFIG_RALINK_RT288X),y)
 define kernel_entry
--a 0x88000000 -e 0x88000000
+-a 0x8a000000 -e 0x8a000000
 endef
 else
 define kernel_entry
@@ -252,6 +252,28 @@ mtd_f5d8235_kernel_part_size=1572864
 mtd_f5d8235_rootfs_part_size=6356992
 define BuildFirmware/F5D8235
 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call  mkmtd/phys,$(mtdlayout_f5d8235)),$(mtd_f5d8235_kernel_part_size),$(mtd_f5d8235_rootfs_part_size))
+endef
+
+# Airlink101 AR670W
+# 
+# Seems to use a hacked u-Boot that doesn't take an uImage, just an LZMA kernel image
+#
+# It also doesn't seem possible (or at least obvious) to drop to a u-Boot prompt,
+# so testing via initramfs is out of the question for now.
+mtdlayout_ar670w=256k(u-boot)ro,896k(kernel),2880k(rootfs),64k(nvram),3776k@0x40000(firmware)
+mtd_ar670w_kernel_part_size=917504
+mtd_ar670w_rootfs_part_size=2949120
+define BuildFirmware/AR670W
+	$(call PatchKernelLzma,$(2),$(call mkcmdline,$(3),ttyS1,57600) $(call mkmtd/phys,$(mtdlayout_ar670w)))
+	( dd if=$(KDIR)/vmlinux-$(2).bin.lzma bs=$(mtd_ar670w_kernel_part_size) \
+		conv=sync; dd if=$(KDIR)/root.$(1) ) > $(call sysupname,$(1),$(2))
+
+	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
+		mkwrgimg -i $(call sysupname,$(1),$(2)) \
+			-d "/dev/mtdblock/2" \
+			-s "wrgn16a_airlink_ar670w" \
+			-o $(call imgname,$(1),$(2))-factory.bin; \
+	fi
 endef
 
 # Factory layout is 2432k(rootfs),320k(langpack),64k(nvram),64k(factory_nvram)
@@ -527,9 +549,11 @@ endef
 #
 # RT288X Profiles
 #
+
 define Image/Build/Profile/AR725W
 	$(call Image/Build/Template/$(fs_squash)/$(1),AR725W,ar725w,AR725W)
 	$(call Image/Build/Template/$(fs_squash)/$(1),AWRT600N,awrt600n,AR725W)
+	$(call Image/Build/Template/$(fs_squash)/$(1),AR670W,ar670w,AR670W)
 endef
 
 define Image/Build/Profile/WRT110
