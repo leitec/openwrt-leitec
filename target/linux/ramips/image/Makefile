@@ -26,7 +26,7 @@ endif
 
 ifeq ($(CONFIG_RALINK_RT288X),y)
 define kernel_entry
--a 0x8a000000 -e 0x8a000000
+-a 0x88000000 -e 0x88000000
 endef
 else
 define kernel_entry
