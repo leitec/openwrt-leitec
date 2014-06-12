@@ -65,6 +65,13 @@ platform_check_image() {
 		}
 		return 0
 		;;
+	ar670w)
+		[ "$magic" != "6d000080" ] && {
+			echo "Invalid image type."
+			return 1
+		}
+		return 0
+		;;
 	dir-645)
 		[ "$magic" != "5ea3a417" ] && {
 			echo "Invalid image type."

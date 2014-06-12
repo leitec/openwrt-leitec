@@ -33,6 +33,9 @@ get_status_led() {
 	3g-6200n)
 		status_led="edimax:green:power"
 		;;
+        ar670w)
+                status_led="ar670w:green:power"
+                ;;
         ar725w)
                 status_led="ar725w:green:power"
                 ;;

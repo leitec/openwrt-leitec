@@ -53,6 +53,9 @@ ramips_board_name() {
 	*"Edimax 3g-6200n")
 		name="3g-6200n"
 		;;
+	*"Airlink101 AR670W")
+		name="ar670w"
+		;;
 	*"Airlink101 AR725W")
 		name="ar725w"
 		;;
