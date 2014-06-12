@@ -14,6 +14,7 @@
 enum ramips_mach_type {
 	RAMIPS_MACH_GENERIC,
 	/* RT2880 based machines */
+	RAMIPS_MACH_AR670W,		/* Airlink101 AR670W */
 	RAMIPS_MACH_AR725W,		/* Airlink101 AR725W */
 	RAMIPS_MACH_F5D8235_V1,		/* Belkin F5D8235 v1 */
 	RAMIPS_MACH_RT_N15,		/* Asus RT-N15 */

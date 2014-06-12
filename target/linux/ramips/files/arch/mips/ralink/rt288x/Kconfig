@@ -2,6 +2,11 @@ if RALINK_RT288X
 
 menu "Ralink RT288x machine selection"
 
+config RT288X_MACH_AR670W
+	bool "Airlink101 AR670W board support"
+	select RALINK_DEV_GPIO_BUTTONS
+	select RALINK_DEV_GPIO_LEDS
+
 config RT288X_MACH_AR725W
 	bool "Airlink101 AR725W board support"
 	select RALINK_DEV_GPIO_BUTTONS
