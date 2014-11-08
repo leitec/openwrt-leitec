@@ -1,6 +1,11 @@
 menu "Configuration"
 	depends on PACKAGE_libopenssl
 
+config OPENSSL_WITH_SSL3
+	bool
+	default n
+	prompt "Enable SSLv3 support"
+
 config OPENSSL_ENGINE_CRYPTO
 	bool
 	prompt "Crypto acceleration support"

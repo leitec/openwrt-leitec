@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openssl
-PKG_VERSION:=1.0.1i
+PKG_VERSION:=1.0.1j
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.openssl.org/source/ \
 	ftp://ftp.funet.fi/pub/crypt/mirrors/ftp.openssl.org/source \
 	ftp://ftp.sunet.se/pub/security/tools/net/openssl/source/
-PKG_MD5SUM:=c8dc151a671b9b92ff3e4c118b174972
+PKG_MD5SUM:=f7175c9cd3c39bb1907ac8bba9df8ed3
 
 PKG_LICENSE:=SSLEAY OPENSSL
 PKG_LICENSE_FILES:=LICENSE
@@ -74,8 +74,13 @@ endef
 
 
 OPENSSL_NO_CIPHERS:= no-idea no-md2 no-mdc2 no-rc5 no-sha0 no-smime \
-	no-rmd160 no-aes192 no-ripemd no-camellia no-ans1 no-krb5
+	no-rmd160 no-aes192 no-ripemd no-camellia no-ans1 no-krb5 \
+	no-ssl2
 OPENSSL_OPTIONS:= shared no-ec no-err no-hw zlib-dynamic no-sse2
+
+ifndef CONFIG_OPENSSL_WITH_SSL3
+  OPENSSL_OPTIONS += no-ssl3
+endif
 
 ifdef CONFIG_OPENSSL_ENGINE_CRYPTO
   OPENSSL_OPTIONS += -DHAVE_CRYPTODEV
