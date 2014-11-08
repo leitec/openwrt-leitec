@@ -588,6 +588,8 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/RTN15,$(1))
 	$(call Image/Build/Profile/V11STFE,$(1))
 	$(call Image/Build/Profile/WLITX4AG300N,$(1))
+	$(call Image/Build/Profile/WRT110,$(1))
+	$(call Image/Build/Profile/WRT160NV2,$(1))
 endef
 endif
 
