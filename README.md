@@ -9,7 +9,7 @@ This fork also updates a few packages, notably _dropbear_ and _openssl_.
 
 **Fully supported:**
 
-- Airlink101 AR670W
+- Airlink101 AR670W - _supported upstream in Chaos Calmer r43153_
 - Airlink101 AR725W - _supported upstream in Barrier Breaker_
 - Asante SmartHub AWRT-600N
 
