@@ -696,3 +696,21 @@ define KernelPackage/regmap/description
 endef
 
 $(eval $(call KernelPackage,regmap))
+
+define KernelPackage/zram
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=ZRAM
+  DEPENDS:=+kmod-lib-lzo
+  KCONFIG:= \
+	CONFIG_XVMALLOC \
+	CONFIG_ZRAM \
+	CONFIG_ZRAM_DEBUG=n
+  FILES:=$(LINUX_DIR)/drivers/staging/zram/zram.ko
+  AUTOLOAD:=$(call AutoLoad,20,zram)
+endef
+
+define KernelPackage/zram/description
+ Compressed RAM block device support
+endef
+
+$(eval $(call KernelPackage,zram))
