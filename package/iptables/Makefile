@@ -308,6 +308,7 @@ endef
 define Package/ip6tables-extra
 $(call Package/iptables/Default)
   DEPENDS:=ip6tables +kmod-ip6tables-extra
+  CATEGORY:=IPv6
   TITLE:=IPv6 header matching modules
 endef
 
