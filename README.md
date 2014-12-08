@@ -21,4 +21,10 @@ This fork also updates a few packages, notably _dropbear_ and _openssl_.
 
 The limitations stem from having only 16MB of RAM. More info is in the wiki.
 
+**Installation:**
+
+Please see the wiki for any notes on your model. Please also see the page on [limitations](https://github.com/leitec/openwrt-leitec/wiki/Limitations-on-Routers-with-16MB-RAM) for models with 16MB RAM.
+
+Then, I recommend Jakob Murko's quickstart guide, available at [jakko.me](https://jakko.me/setting-up-openwrt-on-a-wrt110-and-other-ralink-based-routers/), for instructions on building and installing.
+
 Any contributions are very much welcome!
