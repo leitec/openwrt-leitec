@@ -3,7 +3,7 @@ menu "Configuration"
 
 config DROPBEAR_ECC
 	bool "Elliptic curve cryptography (ECC)"
-	default n
+	default y
 	help
 		Enables elliptic curve cryptography (ECC) support in key exchange and public key
 		authentication.
