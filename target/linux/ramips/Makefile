@@ -17,8 +17,7 @@ LINUX_VERSION:=3.3.8
 
 include $(INCLUDE_DIR)/target.mk
 DEFAULT_PACKAGES+=\
-	kmod-leds-gpio kmod-input-core kmod-input-polldev \
-	kmod-input-gpio-keys-polled kmod-button-hotplug \
+	kmod-leds-gpio kmod-gpio-button-hotplug \
 	kmod-rt2800-pci kmod-rt2800-soc wpad-mini maccalc swconfig
 
 define Target/Description
