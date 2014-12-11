@@ -3,7 +3,7 @@ OpenWrt for old RT2880 routers
 
 This is a fork of OpenWrt Attitude Adjustment 12.09.1 that adds support for
 some older Ralink RT2880-based routers previously unsupported by OpenWrt and/or
-other alternative firmware.
+other alternative firmware. This is built on existing RT2880 support by the OpenWrt team.
 
 This fork also updates a few packages, notably _dropbear_ and _openssl_.
 
