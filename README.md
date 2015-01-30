@@ -23,8 +23,6 @@ The limitations stem from having only 16MB of RAM. More info is in the wiki.
 
 **Installation:**
 
-Please see the wiki for any notes on your model. Please see also the page on [limitations](https://github.com/leitec/openwrt-leitec/wiki/Limitations-on-Routers-with-16MB-RAM) for models with 16MB RAM, and the important [notes on performance](https://github.com/leitec/openwrt-leitec/wiki/Performance).
-
-Then, I recommend Jakob Murko's quickstart guide, available at [jakko.me](https://jakko.me/setting-up-openwrt-on-a-wrt110-and-other-ralink-based-routers/), for instructions on building and installing.
+Please see the wiki for any notes on your model. Please see also the page on [limitations](https://github.com/leitec/openwrt-leitec/wiki/Limitations-on-Routers-with-16MB-RAM) for models with 16MB RAM, and the important [notes on performance](https://github.com/leitec/openwrt-leitec/wiki/Performance). Basic build instructions are also found in the wiki.
 
 Any contributions are very much welcome!
