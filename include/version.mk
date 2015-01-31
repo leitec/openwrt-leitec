@@ -24,10 +24,10 @@ VERSION_NICK:=$(call qstrip,$(CONFIG_VERSION_NICK))
 VERSION_NICK:=$(if $(VERSION_NICK),$(VERSION_NICK),$(RELEASE))
 
 VERSION_REPO:=$(call qstrip,$(CONFIG_VERSION_REPO))
-VERSION_REPO:=$(if $(VERSION_REPO),$(VERSION_REPO),http://downloads.openwrt.org/attitude_adjustment/12.09.1/%S/packages)
+VERSION_REPO:=$(if $(VERSION_REPO),$(VERSION_REPO),http://staticky.com/dl/openwrt-leitec/12.09.1/%S/packages)
 
 VERSION_DIST:=$(call qstrip,$(CONFIG_VERSION_DIST))
-VERSION_DIST:=$(if $(VERSION_DIST),$(VERSION_DIST),OpenWrt)
+VERSION_DIST:=$(if $(VERSION_DIST),$(VERSION_DIST),OpenWrt-leitec)
 
 VERSION_SED:=$(SED) 's,%U,$(VERSION_REPO),g' \
 	-e 's,%V,$(VERSION_NUMBER),g' \
