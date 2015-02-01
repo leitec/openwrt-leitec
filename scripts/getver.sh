@@ -23,6 +23,13 @@ try_git() {
 	[ -n "$REV" ]
 }
 
+try_git_leitec() {
+	[ -d .git ] || return 1
+	REV="$(git rev-parse --short HEAD)"
+	REV="${REV:+git.$REV}"
+	[ -n "$REV" ]
+}
+
 try_hg() {
 	[ -d .hg ] || return 1
 	REV="$(hg log -r-1 --template '{desc}' | awk '{print $2}' | sed 's/\].*//')"
@@ -30,6 +37,5 @@ try_hg() {
 	[ -n "$REV" ]
 }
 
-#try_version || try_svn || try_git || try_hg || REV="unknown"
-REV="git.$(git rev-parse --short HEAD)"
+try_version || try_git_leitec || REV="unknown"
 echo "$REV"
