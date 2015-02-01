@@ -25,7 +25,7 @@ try_git() {
 
 try_git_leitec() {
 	[ -d .git ] || return 1
-	REV="$(git rev-parse --short HEAD)"
+	REV="$(git rev-parse --short=10 HEAD)"
 	REV="${REV:+git.$REV}"
 	[ -n "$REV" ]
 }
