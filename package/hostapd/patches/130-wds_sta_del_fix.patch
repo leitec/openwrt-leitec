@@ -1,6 +1,6 @@
 --- a/src/drivers/driver_nl80211.c
 +++ b/src/drivers/driver_nl80211.c
-@@ -9083,8 +9083,8 @@ static int i802_set_wds_sta(void *priv, 
+@@ -9083,8 +9083,8 @@ static int i802_set_wds_sta(void *priv,
  					name);
  
  		i802_set_sta_vlan(priv, addr, bss->ifname, 0);
