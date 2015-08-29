@@ -1078,17 +1078,17 @@ static int ip17xx_get_port_speed(struct switch_dev *dev, const struct switch_att
 	return 0;
 }
 
-static int ip17xx_get_port_status(struct switch_dev *dev, const struct switch_attr *attr, struct switch_val *val)
+static int ip17xx_get_port_link(struct switch_dev *dev, int nr, struct switch_port_link *link)
 {
 	struct ip17xx_state *state = get_state(dev);
 	int ctrl, speed, status;
-	int nr = val->port_vlan;
-	int len;
-	char *buf = state->buf; // fixed-length at 80.
 
 	if (nr == state->regs->CPU_PORT) {
-		sprintf(buf, "up, 100 Mbps, cpu port");
-		val->value.s = buf;
+		link->link = true;
+		link->aneg = false;
+		link->duplex = true;
+		link->speed = SWITCH_PORT_SPEED_100;
+
 		return 0;
 	}
 
@@ -1101,24 +1101,18 @@ static int ip17xx_get_port_status(struct switch_dev *dev, const struct switch_at
 	if (ctrl < 0 || status < 0 || speed < 0)
 		return -EIO;
 
-	if (status & 4)
-		len = sprintf(buf, "up, %d Mbps, %s duplex",
-			((speed & (1<<11)) ? 100 : 10),
-			((speed & (1<<10)) ? "full" : "half"));
+	link->link = status & 4;
+	if (!link->link)
+		return 0;
+
+	link->aneg = ctrl & (1 << 12);
+	link->duplex = speed & (1 << 10);
+
+	if (speed & (1 << 11))
+		link->speed = SWITCH_PORT_SPEED_100;
 	else
-		len = sprintf(buf, "down");
+		link->speed = SWITCH_PORT_SPEED_10;
 
-	if (ctrl & (1<<12)) {
-		len += sprintf(buf+len, ", auto-negotiate");
-		if (!(status & (1<<5)))
-			len += sprintf(buf+len, " (in progress)");
-	} else {
-		len += sprintf(buf+len, ", fixed speed (%d)",
-			((ctrl & (1<<13)) ? 100 : 10));
-	}
-
-	buf[len] = '\0';
-	val->value.s = buf;
 	return 0;
 }
 
@@ -1143,8 +1137,7 @@ static int ip17xx_set_pvid(struct switch_dev *dev, int port, int val)
 
 
 enum Ports {
-	IP17XX_PORT_STATUS,
-	IP17XX_PORT_LINK,
+	IP17XX_PORT_SPEED,
 	IP17XX_PORT_TAGGED,
 	IP17XX_PORT_PVID,
 };
@@ -1218,24 +1211,16 @@ static const struct switch_attr ip17xx_vlan[] = {
 };
 
 static const struct switch_attr ip17xx_port[] = {
-	[IP17XX_PORT_STATUS] = {
-		.id = IP17XX_PORT_STATUS,
-		.type = SWITCH_TYPE_STRING,
-		.description = "Returns Detailed port status",
-		.name  = "status",
-		.get  = ip17xx_get_port_status,
-		.set = NULL,
-	},
-	[IP17XX_PORT_LINK] = {
-		.id = IP17XX_PORT_LINK,
+	[IP17XX_PORT_SPEED] = {
+		.id = IP17XX_PORT_SPEED,
 		.type = SWITCH_TYPE_INT,
 		.description = "Link speed. Can write 0 for auto-negotiate, or 10 or 100",
-		.name  = "link",
+		.name  = "speed",
 		.get  = ip17xx_get_port_speed,
 		.set = ip17xx_set_port_speed,
 	},
 	[IP17XX_PORT_TAGGED] = {
-		.id = IP17XX_PORT_LINK,
+		.id = IP17XX_PORT_TAGGED,
 		.type = SWITCH_TYPE_INT,
 		.description = "0 = untag, 1 = add tags, 2 = do not alter (This value is reset if vlans are altered)",
 		.name  = "tagged",
@@ -1258,6 +1243,7 @@ static const struct switch_dev_ops ip17xx_ops = {
 		.n_attr = ARRAY_SIZE(ip17xx_vlan),
 	},
 
+	.get_port_link = ip17xx_get_port_link,
 	.get_port_pvid = ip17xx_get_pvid,
 	.set_port_pvid = ip17xx_set_pvid,
 	.get_vlan_ports = ip17xx_get_ports,
