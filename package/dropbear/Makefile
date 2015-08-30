@@ -48,6 +48,7 @@ endef
 define Package/dropbear/conffiles
 /etc/dropbear/dropbear_rsa_host_key
 /etc/dropbear/dropbear_dss_host_key 
+/etc/dropbear/dropbear_ecdsa_host_key
 /etc/config/dropbear 
 endef
 
@@ -118,6 +119,7 @@ define Package/dropbear/install
 	$(INSTALL_DIR) $(1)/etc/dropbear
 	touch $(1)/etc/dropbear/dropbear_rsa_host_key
 	touch $(1)/etc/dropbear/dropbear_dss_host_key
+	touch $(1)/etc/dropbear/dropbear_ecdsa_host_key
 endef
 
 define Package/dropbearconvert/install
