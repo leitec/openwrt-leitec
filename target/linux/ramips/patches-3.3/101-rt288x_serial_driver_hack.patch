@@ -1,6 +1,6 @@
 --- a/drivers/tty/serial/8250/Kconfig
 +++ b/drivers/tty/serial/8250/Kconfig
-@@ -258,6 +258,14 @@ config SERIAL_8250_ACORN
+@@ -262,6 +262,14 @@ config SERIAL_8250_ACORN
  	  system, say Y to this option.  The driver can handle 1, 2, or 3 port
  	  cards.  If unsure, say N.
  
